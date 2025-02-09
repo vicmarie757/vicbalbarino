@@ -1,0 +1,97 @@
+BALBARINO, VIC MARIE L. MEng 124 AdMath Coding Exercise 01 CODES
+----------------------------------------------------------------
+
+*************Back End Code**************
+
+# DecToBin.py
+
+def decToBin (number):
+    reversed_list = []
+    binary_list = []
+    binary_number = 0.0
+
+    def convertDecToBin(local_current_val):
+        while local_current_val > 0:
+            next_val = int(local_current_val / 2)
+            remainder = str(local_current_val % 2)
+            reversed_list.append(remainder)
+            local_current_val = next_val
+
+        items = len(reversed_list)
+        for i in range(items):
+            binary_list.append(reversed_list[items - i - 1])
+        local_binary_number = "".join(binary_list)
+        return local_binary_number
+
+    if number == 0:
+        binary_number = 0
+        return binary_number
+    elif number < 0:
+        number = -1 * number
+        binary_number = convertDecToBin(number)
+        return f"-{binary_number}"
+    else:
+        binary_number = convertDecToBin(number)
+        return binary_number
+
+
+# BinToDec.py
+
+def binToDec(binary_number):
+    binary_str = str(binary_number)
+    decimal_value = 0
+
+    for digit in binary_str:
+        decimal_value = decimal_value * 2 + int(digit)
+
+    return decimal_value
+
+********************FRONT END CODE*******************
+
+# WebAppDecToBin.py
+
+import streamlit as st
+import DecToBin as db
+import BinToDec as bd
+
+st.title("Decimal to Binary and Binary to Decimal Converter")
+st.subheader('Hi, Welcome!', divider='rainbow')
+st.caption('Let us convert decimals to binary and vice versa.')
+
+option = st.selectbox("Select an option:",("Decimal to Binary", "Binary to Decimal"), index = None)
+st.write("You selected:", option)
+print(st.session_state)
+
+if option == "Decimal to Binary":
+    st.subheader("Decimal to Binary Converter", divider='red')
+    st.caption("Let us convert Decimal Numbers to Binary!")
+    decimal_number = st.text_input("Enter a Decimal Integer number:", key="decimal_number")
+    print (st.session_state)
+    convert_button = st.button("Convert", key="convert_button")
+
+    if convert_button:
+        if decimal_number.strip():
+            binary_num = db.decToBin(int(decimal_number))
+            st.text_input("Binary Number Equivalent:", value=str(binary_num))
+            st.success('Success!', icon="✅")
+        else:
+            st.warning("Please enter a Decimal Integer number.")
+
+elif option == "Binary to Decimal":
+    st.subheader("Binary to Decimal Converter", divider='red')
+    st.caption("Let us convert Binary Numbers to Decimal!")
+    binary_number = st.text_input("Enter a Binary number:", key="binary_number")
+    convert_button = st.button("Convert", key="convert_button")
+
+    if convert_button:
+        if binary_number.strip():
+            decimal_num = bd.binToDec(binary_number)
+            st.text_input("Decimal Integer Number Equivalent:", value=str(decimal_num))
+            st.success('Success!', icon="✅")
+        else:
+            st.warning("Please enter a Decimal Integer number.")
+
+
+
+
+

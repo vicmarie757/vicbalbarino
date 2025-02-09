@@ -1,0 +1,136 @@
+WEB.py
+
+import streamlit as st
+import numpy as np
+
+# Set the background image and color
+st.set_page_config(page_title="System of Linear Equations Calculator", layout="wide", page_icon=":rose:")
+
+st.markdown("""
+        <h1 style="font-size: 50px; font-family: 'Arial, sans-serif'; text-align: center; color: pink">
+        System of Linear Equations Calculator
+        </h1>
+    """, unsafe_allow_html=True)
+
+st.markdown("""
+        <h1 style="font-size: 20px; font-family: 'Arial, sans-serif'; text-align: center; color: pink">
+        Jade Bryll C. Cebrian & Vic Marie Balbarino
+        </h1>
+    """, unsafe_allow_html=True)
+
+# Get the size of the matrices from the user
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.markdown("""
+            <h1 style="font-size: 20px; font-family: 'Arial, sans-serif'; text-align: left; color: pink">
+            Input number of Linear Equations:
+            </h1>
+        """, unsafe_allow_html=True)
+with col2:
+    num_equations = st.number_input("", min_value=2, max_value=5, key='num_equations')
+
+# Create empty lists to store the coefficients and constants
+coefficients = []
+constants = []
+
+# Get the coefficients and constants from the user
+col1, col2 = st.columns([1,2])
+with col1:
+    st.markdown("""
+            <h1 style="font-size: 20px; font-family: 'Arial, sans-serif'; text-align: left; color: pink">
+            Input for the Coefficients and Constants:
+            </h1>
+        """, unsafe_allow_html=True)
+with col2:
+    for i in range(num_equations):
+        st.markdown("""
+                    <h1 style="font-size: 20px; font-family: 'Arial, sans-serif'; text-align: left; color: pink">
+                    Equation
+                    </h1>
+                """, unsafe_allow_html=True)
+        st.subheader(f"{i + 1}")
+        col = st.columns(num_equations, gap="medium")
+        row_coeffs = []
+        for j in range(num_equations):
+            with col[j]:
+                st.markdown("""
+                            <h1 style="font-size: 20px; font-family: 'Arial, sans-serif'; text-align: left; color: pink">
+                            Coefficients
+                            </h1>
+                        """, unsafe_allow_html=True)
+                coeff = st.number_input(f"{j + 1}", key=f"coeff_{i}_{j}", format="%f")
+                row_coeffs.append(coeff)
+        st.markdown("""
+                                    <h1 style="font-size: 20px; font-family: 'Arial, sans-serif'; text-align: left; color: pink">
+                                    Constants
+                                    </h1>
+                                """, unsafe_allow_html=True)
+        constants.append(st.number_input("", key=f"const_{i}"))
+        coefficients.append(row_coeffs)
+
+# Create the coefficient and constant matrices
+coefficient_matrix = np.array(coefficients)
+constant_matrix = np.array(constants)
+
+# Define a function to calculate the inverse of a matrix
+def inverse_matrix(matrix):
+    return np.linalg.inv(matrix)
+
+# Define a function to solve the system of equations
+def solve_system(coefficient_matrix, constant_matrix):
+    matrix_inv = np.linalg.inv(coefficient_matrix)
+    solution = np.dot(matrix_inv, constant_matrix)
+    return solution
+
+# Add a button to solve the system of equations
+if st.button("Calculate"):
+    # Check if the coefficient matrix is square
+    if coefficient_matrix.shape[0] != coefficient_matrix.shape[1]:
+        st.error("The coefficient matrix must be square.")
+    else:
+        # Check if the determinant of the coefficient matrix is non-zero
+        if np.linalg.det(coefficient_matrix) == 0:
+            st.error("The coefficient matrix is singular and cannot be solved.")
+        else:
+            # Calculate the inverse of the coefficient matrix
+            A = inverse_matrix(coefficient_matrix)
+            # Calculate the solution
+            X = solve_system(coefficient_matrix, constant_matrix)
+            # Display the inverse of the coefficient matrix and the constant matrix
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.markdown("""
+                                            <h1 style="font-size: 20px; font-family: 'Arial, sans-serif'; text-align: left; color: pink">
+                                            Step by Step Solution:
+                                            </h1>
+                                        """, unsafe_allow_html=True)
+            with col2:
+                st.subheader("")
+                st.write(np.round(A, 2))
+            with col3:
+                st.subheader("")
+                st.write(np.round(constant_matrix, 2))
+            # Display the solution
+            st.markdown("""
+                                                        <h1 style="font-size: 20px; font-family: 'Arial, sans-serif'; text-align: left; color: pink">
+                                                        Solution of the System of Linear Equations:
+                                                        </h1>
+                                                    """, unsafe_allow_html=True)
+            st.subheader("")
+            for i, root in enumerate(X):
+                st.write(f"X{i + 1}: {root}")
+# Add divider
+st.divider()
+
+# Add credits
+col1, col2, col3, col4, col5 = st.columns(5)
+with col3:
+    st.markdown("""
+                                    <h1 style="font-size: 20px; font-family: 'Arial, sans-serif'; text-align: left; color: pink">
+                                    JBV TEAM
+                                    </h1>
+                                """, unsafe_allow_html=True)
+with col4:
+    st.image("https://scontent.fceb1-3.fna.fbcdn.net/v/t39.30808-6/381009395_2270136586709594_6480641745106536307_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFWh2_zYvdjhqhpW1u9csFWfYrbiaYiaTl9ituJpiJpOaPTbKKqkuBl0qBhuN6DdcSFBhj2BHAy3sq4sAI0wDSJ&_nc_ohc=_Lnwo8Fx-TAQ7kNvgHhgUpt&_nc_zt=23&_nc_ht=scontent.fceb1-3.fna&oh=00_AfC9RPsQwGpY7bQtjVH8h9_MWcOWTVRF3O9vQls2Loa3Jg&oe=6638AAB1", width=200)
+with col5:
+    st.image("https://scontent.fceb1-4.fna.fbcdn.net/v/t39.30808-6/440786825_970361821464242_6057295990105198802_n.jpg?stp=dst-jpg_p526x296&_nc_cat=107&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeE1QFE7gV6IlnLELnALt5CNNNW81YO4LI801bzVg7gsj5acTH8Qkaak9Gr9zZvfQk87rQp1d02BCszc5I7S3lQY&_nc_ohc=w1YyYzkfSKMQ7kNvgFBacnj&_nc_ht=scontent.fceb1-4.fna&oh=00_AfAN836XgyoV9x2KUEzulhU6hkIJ4V82m3XxEyEtc7cgjA&oe=663BF658", width=200)
